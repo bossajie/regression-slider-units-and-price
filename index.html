@@ -2,21 +2,83 @@
 <html>
 <head>
 	<title>Bandwidth vs Price Regression Line</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			max-width: 800px;
+			margin: auto;
+			padding: 20px;
+		}
+		h1 {
+			text-align: center;
+		}
+		label {
+			display: block;
+			margin-bottom: 10px;
+		}
+		input[type=range] {
+			-webkit-appearance: none;
+			width: 100%;
+			height: 20px;
+			margin-bottom: 20px;
+		}
+		input[type=range]:focus {
+			outline: none;
+		}
+		input[type=range]::-webkit-slider-runnable-track {
+			width: 100%;
+			height: 5px;
+			background: #ddd;
+			border-radius: 3px;
+		}
+		input[type=range]::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			height: 20px;
+			width: 20px;
+			border-radius: 50%;
+			background: #4CAF50;
+			cursor: pointer;
+			margin-top: -8px;
+		}
+		input[type=range]:focus::-webkit-slider-runnable-track {
+			background: #ccc;
+		}
+		.slider-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.slider-value {
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+	</style>
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
 
-	<div style="margin-top: 20px; margin-bottom: 20px;">
-		<label for="bandwidth_slider">Bandwidth (GB):</label>
-		<input id="bandwidth_slider" type="range" min="1" max="50000" value="25000" step="1">
-		<span id="bandwidth_value">25000</span>
-		<br>
-		<label for="price_slider">Price (USD):</label>
-		<input id="price_slider" type="range" min="0.8" max="4" value="1.9" step="0.01">
-		<span id="price_value">1.9</span>
-	</div>
+	<div class="container">
 
-	<script>
+		<h1>Bandwidth vs Price Regression Line</h1>
+
+		<div class="slider-container">
+			<label for="bandwidth_slider">Bandwidth (GB):</label>
+			<input id="bandwidth_slider" type="range" min="1" max="50000" value="25000" step="1">
+			<div class="slider-value"><span id="bandwidth_value">25000</span> GB</div>
+		</div>
+
+		<div class="slider-container">
+			<label for="price_slider">Price (USD):</label>
+			<input id="price_slider" type="range" min="0.8" max="4" value="1.9" step="0.01">
+			<div class="slider-value">$<span id="price_value">1.9</span></div>
+		</div>
+
+		<script>
 
 		var bandwidth_slider = document.getElementById("bandwidth_slider");
 		var bandwidth_value = document.getElementById("bandwidth_value");
@@ -39,6 +101,3 @@
 		}
 
 	</script>
-
-</body>
-</html>
