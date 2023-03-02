@@ -1,119 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Bandwidth Pricing Calculator</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Regression Calculator</title>
 	<style>
 		body {
 			font-family: Arial, sans-serif;
 			margin: 0;
 			padding: 0;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			height: 100vh;
-			background-color: #f2f2f2;
 		}
-
 		h1 {
-			text-align: center;
-			margin-bottom: 1rem;
+			background-color: #0077be;
+			color: white;
+			padding: 1rem;
+			margin: 0;
 		}
-
+		h2 {
+			margin-top: 3rem;
+		}
 		form {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			background-color: #fff;
+			max-width: 600px;
+			margin: 2rem auto;
 			padding: 2rem;
+			background-color: #f8f8f8;
 			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-			width: 80%;
-			max-width: 400px;
-			min-width: 300px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		}
-
 		label {
+			display: block;
 			margin-bottom: 0.5rem;
-			font-weight: bold;
 		}
-
-		input[type="number"],
-		input[type="range"] {
-			width: 100%;
-			margin-bottom: 1rem;
+		input[type="number"] {
 			padding: 0.5rem;
-			border: none;
 			border-radius: 5px;
-			box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+			border: 1px solid #ccc;
+			width: 100%;
+			box-sizing: border-box;
 			font-size: 1rem;
+			margin-bottom: 1rem;
 		}
-
-		input[type="range"] {
-			-webkit-appearance: none;
-			background-color: #d3d3d3;
-			height: 5px;
-			border-radius: 2px;
-			outline: none;
+		p {
+			font-size: 1.2rem;
+			font-weight: bold;
+			margin-top: 0.5rem;
 		}
-
-		input[type="range"]::-webkit-slider-thumb {
-			-webkit-appearance: none;
-			background-color: #0080ff;
-			width: 20px;
-			height: 20px;
-			border-radius: 50%;
-			cursor: pointer;
-		}
-
-		input[type="number"]:read-only {
-			background-color: #d3d3d3;
-		}
-    
-    input[type="number"]{
-			border-radius: 10px;
-      border-style: solid;
-      border-width: thin;
-		}
-  
 	</style>
 </head>
 <body>
-	<h1>Bandwidth Pricing Calculator</h1>
+	<h1>Regression Calculator</h1>
 	<form>
-		<label for="volume">Volume of GB:</label>
-		<input type="number" id="volume" name="volume" min="1" max="50000" step="1">
-		<p>or</p>
-		<label for="slider">Volume of GB:</label>
-		<input type="range" id="slider" name="slider" min="1" max="50000" step="1">
-		<label for="price">Price per GB:</label>
-		<input type="number" id="price" name="price" step="0.00000001" readonly>
+		<h2>Residential</h2>
+		<label for="residential-input">Enter data usage in GB:</label>
+		<input type="number" id="residential-input" onchange="calculateResidential()" oninput="calculateResidential()">
+		<p id="residential-output"></p>
+		<h2>Scraper</h2>
+		<label for="scraper-input">Enter data usage in GB:</label>
+		<input type="number" id="scraper-input" onchange="calculateScraper()" oninput="calculateScraper()">
+		<p id="scraper-output"></p>
 	</form>
-<script>
-		const volumeInput = document.getElementById("volume");
-		const sliderInput = document.getElementById("slider");
-		const priceInput = document.getElementById("price");
 
-		// Update price when volume changes
-		const updatePrice = (volume) => {
-			const price = (-0.000094 * volume + 5).toFixed(2);
-			priceInput.value = price;
-		};
+	<script>
+		function calculateResidential() {
+			const x = document.getElementById("residential-input").value;
+			let y = -0.0035*x + 5.0035;
+			if (x > 1000 && x <= 10000) {
+				y = 1.5 - 0.0001*x;
+				if (y < 1) {
+					y = 1;
+				}
+			} else if (x > 10000) {
+				y = 1;
+			}
+			document.getElementById("residential-output").innerHTML = "Price: $" + y.toFixed(2);
+		}
 
-		// Update slider and price when input changes
-		volumeInput.addEventListener("input", (e) => {
-			sliderInput.value = e.target.value;
-			updatePrice(e.target.value);
-		});
-
-		// Update input and price when slider changes
-		sliderInput.addEventListener("input", (e) => {
-			volumeInput.value = e.target.value;
-			updatePrice(e.target.value);
-		});
+		function calculateScraper() {
+			const x = document.getElementById("scraper-input").value;
+			let y = -0.005*x + 7.005;
+			if (x > 1000 && x <= 10000) {
+				y = 2 - 0.0002*x;
+				if (y < 1.5) {
+					y = 1.5;
+				}
+			} else if (x > 10000) {
+				y = 1.5;
+			}
+			document.getElementById("scraper-output").innerHTML = "Price: $" + y.toFixed(2);
+		}
 	</script>
 </body>
 </html>
