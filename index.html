@@ -58,56 +58,69 @@
 		<p id="scraper-output"></p>
 	</form>
 <script>
-const constants = [
-  {
-    name: 'Residential',
+// Define constants for Residential and Scraper
+const CONSTANTS = {
+  Residential: {
+    // Define pricing range and regression for Residential
     range: [
       { from: 1, to: 1000, regression: { slope: -0.0035, intercept: 5.0035 } },
-      { from: 1000, to: 10000, regression: { slope: -0.00005, intercept: 1.5 } },
+      { from: 1000, to: 10000, regression: { slope: -0.0005, intercept: 1.5 } },
       { from: 10000, to: Infinity, regression: { slope: 0, intercept: 1 } },
     ],
   },
-  {
-    name: 'Scraper',
+  Scraper: {
+    // Define pricing range and regression for Scraper
     range: [
       { from: 1, to: 1000, regression: { slope: -0.005, intercept: 7.005 } },
-      { from: 1000, to: 10000, regression: { slope: -0.00025, intercept: 2 } },
+      { from: 1000, to: 10000, regression: { slope: -0.0005, intercept: 1.5 } },
       { from: 10000, to: Infinity, regression: { slope: 0, intercept: 1.5 } },
     ],
   },
-];
+};
 
-function calculatePrice(dataUsage, planType) {
-  const constant = constants.find(c => c.name === planType);
-  let price;
+// Function to calculate the price for a given data usage and category
+function calculatePrice(usage, category) {
+  // Find the range that the usage falls into based on the given category
+  const pricingRange = CONSTANTS[category].range.find((range) => {
+    return usage >= range.from && usage <= range.to;
+  });
 
-  for (let i = 0; i < constant.range.length; i++) {
-    const range = constant.range[i];
-
-    if (dataUsage >= range.from && dataUsage <= range.to) {
-      price = dataUsage * range.regression.slope + range.regression.intercept;
-      break;
-    }
+  // If the usage is above the highest range, return the highest price
+  if (!pricingRange) {
+    return CONSTANTS[category].range[CONSTANTS[category].range.length - 1].regression.intercept;
   }
 
-  if (!price) {
-    price = dataUsage * constant.range[constant.range.length - 1].regression.slope + constant.range[constant.range.length - 1].regression.intercept;
-  }
+  // Calculate the price using the regression equation for the given range
+  const price = pricingRange.regression.slope * usage + pricingRange.regression.intercept;
 
-  return price.toFixed(2);
+  // Return the price rounded to 2 decimal places
+  return Math.round(price * 100) / 100;
 }
 
+// Function to calculate the price for Residential category
 function calculateResidential() {
-  const dataUsage = document.getElementById('residential-input').value;
-  const price = calculatePrice(dataUsage, 'Residential');
-  document.getElementById('residential-output').textContent = `Price: $${price}`;
+  // Get the input value from the Residential input field
+  const input = document.getElementById("residential-input").value;
+
+  // Calculate the price for the input value using the calculatePrice function and the Residential category
+  const price = calculatePrice(input, "Residential");
+
+  // Set the output value to the calculated price
+  document.getElementById("residential-output").textContent = `Price: $${price}`;
 }
 
+// Function to calculate the price for Scraper category
 function calculateScraper() {
-  const dataUsage = document.getElementById('scraper-input').value;
-  const price = calculatePrice(dataUsage, 'Scraper');
-  document.getElementById('scraper-output').textContent = `Price: $${price}`;
+  // Get the input value from the Scraper input field
+  const input = document.getElementById("scraper-input").value;
+
+  // Calculate the price for the input value using the calculatePrice function and the Scraper category
+  const price = calculatePrice(input, "Scraper");
+
+  // Set the output value to the calculated price
+  document.getElementById("scraper-output").textContent = `Price: $${price}`;
 }
+
 
 </script>
 
