@@ -57,6 +57,7 @@
 		<input type="number" id="scraper-input" onchange="calculateScraper()" oninput="calculateScraper()">
 		<p id="scraper-output"></p>
 	</form>
+    <pre id="config"> </pre>
 <script>
 const constants = [
   {
@@ -76,6 +77,9 @@ const constants = [
     ],
   },
 ];
+  
+
+  document.getElementById("config").textContent = JSON.stringify(constants, undefined, 2);
 
 function calculatePrice(dataUsage, planType) {
   const constant = constants.find(c => c.name === planType);
