@@ -1,125 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Regression Calculator</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			margin: 0;
-			padding: 0;
-		}
-		h1 {
-			background-color: #0077be;
-			color: white;
-			padding: 1rem;
-			margin: 0;
-		}
-		h2 {
-			margin-top: 3rem;
-		}
-		form {
-			max-width: 600px;
-			margin: 2rem auto;
-			padding: 2rem;
-			background-color: #f8f8f8;
-			border-radius: 10px;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-		}
-		label {
-			display: block;
-			margin-bottom: 0.5rem;
-		}
-		input[type="number"] {
-			padding: 0.5rem;
-			border-radius: 5px;
-			border: 1px solid #ccc;
-			width: 100%;
-			box-sizing: border-box;
-			font-size: 1rem;
-			margin-bottom: 1rem;
-		}
-		p {
-			font-size: 1.2rem;
-			font-weight: bold;
-			margin-top: 0.5rem;
-		}
-	</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+
+    .calculator {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 5px;
+      margin: 10px 0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+  </style>
+  <title>Price Calculator</title>
 </head>
 <body>
-	<h1>Regression Calculator</h1>
-	<form>
-		<h2>Residential</h2>
-		<label for="residential-input">Enter data usage in GB:</label>
-		<input type="number" id="residential-input" onchange="calculateResidential()" oninput="calculateResidential()">
-		<p id="residential-output"></p>
-		<h2>Scraper</h2>
-		<label for="scraper-input">Enter data usage in GB:</label>
-		<input type="number" id="scraper-input" onchange="calculateScraper()" oninput="calculateScraper()">
-		<p id="scraper-output"></p>
-	</form>
-    <pre id="config"> </pre>
-<script>
-const constants = [
-  {
-    name: 'Residential',
-    range: [
-      { from: 1, to: 1000, regression: { slope: -0.0035, intercept: 5.0035 } },
-      { from: 1000, to: 10000, regression: { slope: -0.00005, intercept: 1.5 } },
-      { from: 10000, to: Infinity, regression: { slope: 0, intercept: 1 } },
-    ],
-  },
-  {
-    name: 'Scraper',
-    range: [
-      { from: 1, to: 1000, regression: { slope: -0.005, intercept: 7.005 } },
-      { from: 1000, to: 10000, regression: { slope: -0.00005, intercept: 2 } },
-      { from: 10000, to: Infinity, regression: { slope: 0, intercept: 1.5 } },
-    ],
-  },
-];
-  
+  <div class="calculator">
+    <h2>Price Calculator</h2>
 
-  document.getElementById("config").textContent = JSON.stringify(constants, undefined, 1);
+    <label for="gbQuantity">Enter GB Quantity:</label><br/>
+    <input type="number" id="gbQuantity" name="gbQuantity" min="1" max="100000" step="1" value="1" oninput="syncInputAndSlider(); calculatePrice();"><br/>
+ <!--    <input type="range" id="gbSlider" name="gbSlider" min="1" max="100000" step="1" value="1" oninput="syncInputAndSlider(); calculatePrice();"><br/> -->
 
-function calculatePrice(dataUsage, planType) {
-  const constant = constants.find(c => c.name === planType);
-  let price;
+    <h2 id="priceDisplay"></h2>
+    <h2 id="discountDisplay"></h2>
+  </div>
 
-  // loop through the range
-  for (let i = 0; i < constant.range.length; i++) {
-    const range = constant.range[i];
+  <script>
+    const priceTiers = [
+   		{ maxQuantity: 10, price: 5.00 },
+            { maxQuantity: 25, price: 4.50 },
+            { maxQuantity: 50, price: 4.00 },
+            { maxQuantity: 100, price: 3.50 },
+            { maxQuantity: 150, price: 3.00 },
+            { maxQuantity: 200, price: 2.90 },
+            { maxQuantity: 250, price: 2.80 },
+            { maxQuantity: 300, price: 2.70 },
+            { maxQuantity: 400, price: 2.60 },
+            { maxQuantity: 500, price: 2.50 },
+            { maxQuantity: 750, price: 2.40 },
+            { maxQuantity: 1000, price: 2.20 },
+            { maxQuantity: 5000, price: 2.00 },
+            { maxQuantity: 10000, price: 1.75 },
+            { maxQuantity: 15000, price: 1.50 },
+            { maxQuantity: 20000, price: 1.40 },
+            { maxQuantity: 25000, price: 1.30 },
+            { maxQuantity: 30000, price: 1.20 },
+            { maxQuantity: 40000, price: 1.10 },
+            { maxQuantity: 50000, price: 1.05 },
+            { maxQuantity: 100000, price: 1.00 }
+    ];
 
-    // Look up the regression data for the given category
-    // only find the value that less than or equal to the value of 'to' on the ranges
-    if (dataUsage >= range.from && dataUsage <= range.to) {
-      price = dataUsage * range.regression.slope + range.regression.intercept;
-      break;
+    const getTieredPrice = (gbQuantity) => {
+        const tier = priceTiers.find((tier) => gbQuantity < tier.maxQuantity);
+            return tier ? parseFloat(tier.price.toFixed(2)) : null;
+    };
+
+    function calculatePrice() {
+      const gbQuantity = Number(document.getElementById("gbQuantity").value);
+      const tieredPrice = getTieredPrice(gbQuantity);
+      const originalPrice = priceTiers[0].price;
+      const discount = (originalPrice - tieredPrice) / originalPrice * 100;
+
+      document.getElementById("priceDisplay").innerText = `Price: $${tieredPrice.toFixed(2)}`;
+      document.getElementById("discountDisplay").innerText = `Discount: ${discount.toFixed(2)}%`;
     }
-  }
 
-  //if no price or higher than the given range, use the highest range
-  if (!price) {
-    price = dataUsage * constant.range[constant.range.length - 1].regression.slope + constant.range[constant.range.length - 1].regression.intercept;
-  }
+    function syncInputAndSlider() {
+      const gbQuantity = Number(document.getElementById("gbQuantity").value);
+      /* document.getElementById("gbSlider").value = gbQuantity */;
+      document.getElementById("gbQuantity").value = gbQuantity;
+    }
 
-  return price.toFixed(2);
-}
-
-function calculateResidential() {
-  const dataUsage = document.getElementById('residential-input').value;
-  const price = calculatePrice(dataUsage, 'Residential');
-  document.getElementById('residential-output').textContent = `Price: $${price}`;
-}
-
-function calculateScraper() {
-  const dataUsage = document.getElementById('scraper-input').value;
-  const price = calculatePrice(dataUsage, 'Scraper');
-  document.getElementById('scraper-output').textContent = `Price: $${price}`;
-}
-
-
-</script>
-
-
+    // Initial calculation
+    calculatePrice();
+  </script>
 </body>
 </html>
