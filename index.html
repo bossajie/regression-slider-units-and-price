@@ -41,29 +41,68 @@
   </div>
 
   <script>
-    const priceTiers = [
-   		{ maxQuantity: 10, price: 5.00 },
-            { maxQuantity: 25, price: 4.50 },
-            { maxQuantity: 50, price: 4.00 },
-            { maxQuantity: 100, price: 3.50 },
-            { maxQuantity: 150, price: 3.00 },
-            { maxQuantity: 200, price: 2.90 },
-            { maxQuantity: 250, price: 2.80 },
-            { maxQuantity: 300, price: 2.70 },
-            { maxQuantity: 400, price: 2.60 },
-            { maxQuantity: 500, price: 2.50 },
-            { maxQuantity: 750, price: 2.40 },
-            { maxQuantity: 1000, price: 2.20 },
-            { maxQuantity: 5000, price: 2.00 },
-            { maxQuantity: 10000, price: 1.75 },
-            { maxQuantity: 15000, price: 1.50 },
-            { maxQuantity: 20000, price: 1.40 },
-            { maxQuantity: 25000, price: 1.30 },
-            { maxQuantity: 30000, price: 1.20 },
-            { maxQuantity: 40000, price: 1.10 },
-            { maxQuantity: 50000, price: 1.05 },
-            { maxQuantity: 100000, price: 1.00 }
-    ];
+    const priceTiers = [ 
+                {
+                    "maxQuantity" : 1,
+                    "price" : 5.0
+                }, 
+                {
+                    "maxQuantity" : 10,
+                    "price" : 4.5
+                }, 
+                {
+                    "maxQuantity" : 25,
+                    "price" : 4.0
+                }, 
+                {
+                    "maxQuantity" : 50,
+                    "price" : 3.5
+                }, 
+                {
+                    "maxQuantity" : 100,
+                    "price" : 3.0
+                }, 
+                {
+                    "maxQuantity" : 150,
+                    "price" : 2.9
+                }, 
+                {
+                    "maxQuantity" : 200,
+                    "price" : 2.8
+                }, 
+                {
+                    "maxQuantity" : 250,
+                    "price" : 2.7
+                }, 
+                {
+                    "maxQuantity" : 300,
+                    "price" : 2.6
+                }, 
+                {
+                    "maxQuantity" : 400,
+                    "price" : 2.5
+                }, 
+                {
+                    "maxQuantity" : 500,
+                    "price" : 2.4
+                }, 
+                {
+                    "maxQuantity" : 750,
+                    "price" : 2.2
+                }, 
+                {
+                    "maxQuantity" : 1000,
+                    "price" : 2.0
+                }, 
+                {
+                    "maxQuantity" : 5000,
+                    "price" : 1.75
+                }, 
+                {
+                    "maxQuantity" : 10000,
+                    "price" : 1.5
+                }
+            ];
 
     const getTieredPrice = (gbQuantity) => {
         const tier = priceTiers.find((tier) => gbQuantity < tier.maxQuantity);
