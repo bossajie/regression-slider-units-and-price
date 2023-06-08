@@ -2,12 +2,48 @@
 <html>
 <head>
     <title>PAYG Pricing Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: #343a40;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7e8299;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #price {
+            font-size: 24px;
+            color: #495057;
+        }
+    </style>
 </head>
 <body>
     <h1>PAYG Pricing Calculator</h1>
 
-    <label for="bandwidth">Bandwidth in GB:</label>
-    <input type="number" id="bandwidth" name="bandwidth">
+    <div class="form-group">
+        <label for="bandwidth">Bandwidth in GB:</label>
+        <input type="number" id="bandwidth" name="bandwidth">
+    </div>
 
     <p id="price">Price: </p>
 
