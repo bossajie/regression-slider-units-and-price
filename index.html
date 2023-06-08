@@ -1,132 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      padding: 20px;
-    }
-
-    .calculator {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin: auto;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      padding: 5px;
-      margin: 10px 0;
-    }
-
-    input[type="range"] {
-      width: 100%;
-    }
-  </style>
-  <title>Price Calculator</title>
+    <title>PAYG Pricing Calculator</title>
 </head>
 <body>
-  <div class="calculator">
-    <h2>Price Calculator</h2>
+    <h1>PAYG Pricing Calculator</h1>
 
-    <label for="gbQuantity">Enter GB Quantity:</label><br/>
-    <input type="number" id="gbQuantity" name="gbQuantity" min="1" max="100000" step="1" value="1" oninput="syncInputAndSlider(); calculatePrice();"><br/>
- <!--    <input type="range" id="gbSlider" name="gbSlider" min="1" max="100000" step="1" value="1" oninput="syncInputAndSlider(); calculatePrice();"><br/> -->
+    <label for="bandwidth">Bandwidth in GB:</label>
+    <input type="number" id="bandwidth" name="bandwidth">
 
-    <h2 id="priceDisplay"></h2>
-    <h2 id="discountDisplay"></h2>
-  </div>
+    <p id="price">Price: </p>
 
-  <script>
-    const priceTiers = [ 
-                {
-                    "maxQuantity" : 1,
-                    "price" : 5.0
-                }, 
-                {
-                    "maxQuantity" : 10,
-                    "price" : 4.5
-                }, 
-                {
-                    "maxQuantity" : 25,
-                    "price" : 4.0
-                }, 
-                {
-                    "maxQuantity" : 50,
-                    "price" : 3.5
-                }, 
-                {
-                    "maxQuantity" : 100,
-                    "price" : 3.0
-                }, 
-                {
-                    "maxQuantity" : 150,
-                    "price" : 2.9
-                }, 
-                {
-                    "maxQuantity" : 200,
-                    "price" : 2.8
-                }, 
-                {
-                    "maxQuantity" : 250,
-                    "price" : 2.7
-                }, 
-                {
-                    "maxQuantity" : 300,
-                    "price" : 2.6
-                }, 
-                {
-                    "maxQuantity" : 400,
-                    "price" : 2.5
-                }, 
-                {
-                    "maxQuantity" : 500,
-                    "price" : 2.4
-                }, 
-                {
-                    "maxQuantity" : 750,
-                    "price" : 2.2
-                }, 
-                {
-                    "maxQuantity" : 1000,
-                    "price" : 2.0
-                }, 
-                {
-                    "maxQuantity" : 5000,
-                    "price" : 1.75
-                }, 
-                {
-                    "maxQuantity" : 10000,
-                    "price" : 1.5
+    <script>
+        const priceTiers = [
+            { maxQuantity: 1, price: 5.0 },
+            { maxQuantity: 10, price: 4.5 },
+            { maxQuantity: 25, price: 4.0 },
+            { maxQuantity: 50, price: 3.5 },
+            { maxQuantity: 100, price: 3.0 },
+            { maxQuantity: 150, price: 2.9 },
+            { maxQuantity: 200, price: 2.8 },
+            { maxQuantity: 250, price: 2.7 },
+            { maxQuantity: 300, price: 2.6 },
+            { maxQuantity: 400, price: 2.5 },
+            { maxQuantity: 500, price: 2.4 },
+            { maxQuantity: 750, price: 2.2 },
+            { maxQuantity: 1000, price: 2.0 },
+            { maxQuantity: 5000, price: 1.75 },
+            { maxQuantity: 10000, price: 1.5 }
+        ];
+
+        function calculatePAYGPricing(bandwidthInGB) {
+            const getTieredPrice = (gbQuantity) => {
+                let tier = null;
+
+                for(let i = 0; i < priceTiers.length - 1; i++) {
+                    if (gbQuantity >= priceTiers[i].maxQuantity && gbQuantity < priceTiers[i+1].maxQuantity) {
+                        tier = priceTiers[i];
+                        break;
+                    }
                 }
-            ];
 
-    const getTieredPrice = (gbQuantity) => {
-        const tier = priceTiers.find((tier) => gbQuantity < tier.maxQuantity);
-            return tier ? parseFloat(tier.price.toFixed(2)) : null;
-    };
+                if (!tier) {
+                    tier = priceTiers.reduce((prevTier, currTier) => {
+                        return currTier.maxQuantity > prevTier.maxQuantity ? currTier : prevTier;
+                    });
+                }
 
-    function calculatePrice() {
-      const gbQuantity = Number(document.getElementById("gbQuantity").value);
-      const tieredPrice = getTieredPrice(gbQuantity);
-      const originalPrice = priceTiers[0].price;
-      const discount = (originalPrice - tieredPrice) / originalPrice * 100;
+                return parseFloat(tier.price.toFixed(2));
+            };
 
-      document.getElementById("priceDisplay").innerText = `Price: $${tieredPrice.toFixed(2)}`;
-      document.getElementById("discountDisplay").innerText = `Discount: ${discount.toFixed(2)}%`;
-    }
+            return getTieredPrice(bandwidthInGB);
+        }
 
-    function syncInputAndSlider() {
-      const gbQuantity = Number(document.getElementById("gbQuantity").value);
-      /* document.getElementById("gbSlider").value = gbQuantity */;
-      document.getElementById("gbQuantity").value = gbQuantity;
-    }
+        const bandwidthInput = document.querySelector("#bandwidth");
+        const priceElement = document.querySelector("#price");
 
-    // Initial calculation
-    calculatePrice();
-  </script>
+        bandwidthInput.addEventListener("input", () => {
+            const bandwidth = bandwidthInput.value;
+            const price = calculatePAYGPricing(bandwidth);
+            priceElement.textContent = `Price: $${price}`;
+        });
+    </script>
 </body>
 </html>
